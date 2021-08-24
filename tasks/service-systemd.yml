@@ -1,0 +1,12 @@
+---
+- name: systemd service
+  become: true
+  template:
+    src: "lxd_exporter.systemd.j2"
+    dest: "/lib/systemd/system/lxd_exporter.service"
+    owner: root
+    group: root
+    mode: "u=rw,go=r"
+  notify:
+    - reload systemd daemon
+    - restart lxd_exporter

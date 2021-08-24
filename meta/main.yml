@@ -1,0 +1,23 @@
+---
+galaxy_info:
+  author: Marian Schmotzer
+  description: Role to install Prometheus Lxd Exporter
+
+  license: GPLv3
+
+  min_ansible_version: 2.0
+
+  platforms:
+    - name: Ubuntu
+      versions:
+        - all
+    - name: Debian
+      versions:
+        - all
+
+  galaxy_tags:
+    - prometheus
+    - exporter
+
+dependencies:
+  - { role: 'bdellegrazie.ansible-role-prometheus_exporter', version: 'v2.0.3' }

@@ -1,0 +1,103 @@
+---
+- name: user
+  become: true
+  become_user: root
+  user:
+    name: "{{ lxd_exporter_user }}"
+    group: "{{ lxd_exporter_group }}"
+    home: "{{ lxd_exporter_home }}"
+    createhome: false
+    shell: /sbin/nologin
+    comment: lxd_exporter
+    state: present
+    system: true
+  when: lxd_exporter_user_manage | bool
+
+- name: home
+  become: true
+  become_user: root
+  file:
+    path: "{{ lxd_exporter_home }}"
+    owner: "{{ lxd_exporter_user }}"
+    group: "{{ lxd_exporter_group }}"
+    mode: "u=rwx,g=rx,o="
+    state: directory
+  when: lxd_exporter_home_manage | bool
+
+- name: logs
+  become: true
+  become_user: root
+  file:
+    path: "{{ lxd_exporter_log_path }}"
+    owner: "{{ lxd_exporter_user }}"
+    group: "{{ lxd_exporter_group }}"
+    mode: "u=rwx,g=rx,o="
+    state: directory
+
+- name: download tarball
+  become: true
+  become_user: root
+  get_url:
+    url: "{{ lxd_exporter_tarball_url }}"
+    #checksum: "{{ lxd_exporter_tarball_checksum }}"
+    dest: "{{ prometheus_exporter_dist_dir }}/{{ lxd_exporter_signature }}.tar.xz"
+    owner: root
+    group: root
+    mode: "u=rw,go=r"
+
+- name: untar tarball
+  become: true
+  become_user: root
+  unarchive:
+    src: "{{ prometheus_exporter_dist_dir }}/{{ lxd_exporter_signature }}.tar.xz"
+    dest: "{{ prometheus_exporter_dist_dir }}"
+    remote_src: true
+    owner: root
+    group: root
+    mode: "u=rwx,go=rx"
+    creates: "{{ lxd_exporter_dist_dir }}/lxd_exporter"
+
+- name: symlink
+  become: true
+  become_user: root
+  file:
+    src: "{{ lxd_exporter_dist_dir }}/lxd_exporter"
+    path: "{{ prometheus_exporter_dir }}/lxd_exporter"
+    owner: root
+    group: root
+    force: true
+    state: link
+  notify: restart lxd_exporter
+
+- name: config
+  become: true
+  become_user: root
+  template:
+    src: "lxd_exporter.default.conf.j2"
+    dest: "/etc/default/lxd_exporter"
+    owner: root
+    group: root
+    mode: "u=rw,go=r"
+  notify: restart lxd_exporter
+
+- name: install service
+  include: service-{{ prometheus_exporter_service_mgr }}.yml
+
+- name: Service Enabled
+  become: true
+  become_user: root
+  service:
+    name: lxd_exporter
+    enabled: "{{ lxd_exporter_service_enable }}"
+    use: "{{ prometheus_exporter_service_mgr }}"
+  when: lxd_exporter_service_manage
+
+- name: Service State
+  become: true
+  become_user: root
+  service:
+    name: lxd_exporter
+    state: "{{ lxd_exporter_service_state }}"
+    use: "{{ prometheus_exporter_service_mgr }}"
+  register: _lxd_exporter_service_state
+  when: lxd_exporter_service_manage

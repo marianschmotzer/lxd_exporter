@@ -1,0 +1,27 @@
+---
+lxd_exporter_user: lxd_exporter
+lxd_exporter_user_manage: true
+lxd_exporter_group_manage: true
+lxd_exporter_group: lxd
+prometheus_exporter_dist_dir: /opt/prometheus/exporters
+
+lxd_exporter_version: "0.3"
+lxd_exporter_platform_suffix: "linux-amd64"
+lxd_exporter_tarball_checksum: "sha256:8ea08a27b6fcc7134c63b1c7f6a92918401d415274f589deba5ebe1124fa3825"
+lxd_exporter_options: []
+
+lxd_exporter_signature: "lxd_exporter-{{ lxd_exporter_version }}.{{ lxd_exporter_platform_suffix }}"
+lxd_exporter_dist_dir: "{{ prometheus_exporter_dist_dir }}/{{ lxd_exporter_signature }}"
+lxd_exporter_tarball_url: "https://github.com/nieltg/lxd_exporter/releases/download/v{{ lxd_exporter_version }}/{{ lxd_exporter_signature }}.tar.xz"
+lxd_exporter_program: "{{ prometheus_exporter_dir }}/lxd_exporter"
+lxd_exporter_home: "/var/lib/lxd_exporter"
+lxd_exporter_home_manage: true
+
+lxd_exporter_config_file: /etc/default/lxd_exporter
+lxd_exporter_pid_path: "/var/run"
+lxd_exporter_log_path: "/var/log/lxd_exporter"
+
+lxd_exporter_service_manage: true
+lxd_exporter_service_enable: true
+lxd_exporter_service_state: started
+lxd_exporter_service_notify: true

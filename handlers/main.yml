@@ -1,0 +1,11 @@
+---
+- name: restart lxd_exporter
+  become: true
+  become_user: root
+  service:
+    name: lxd_exporter
+    state: "{{ (lxd_exporter_service_state != 'stopped') | ternary('restarted', 'stopped') }}"
+    use: "{{ prometheus_exporter_service_mgr }}"
+  when: lxd_exporter_service_notify and (
+    _lxd_exporter_service_state is not defined or
+    not ( _lxd_exporter_service_state is changed ))

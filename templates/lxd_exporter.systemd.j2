@@ -1,0 +1,16 @@
+[Unit]
+Description=lxd_exporter - Exporter for machine metrics.
+Documentation=https://github.com/nieltg/lxd_exporter
+After=network.target
+
+[Service]
+User={{ lxd_exporter_user }}
+Group={{ lxd_exporter_group }}
+EnvironmentFile={{ lxd_exporter_config_file }}
+ExecStart={{ lxd_exporter_program }} $OPTIONS
+
+SyslogIdentifier=lxd_exporter
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
