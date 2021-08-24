@@ -1,6 +1,6 @@
 # ansible-role-lxd_exporter
 
-Installs the LXD Exporter for Prometheus.
+Installs the LXD Exporter for Prometheus via ansible
 
 
 # Requirements
@@ -19,6 +19,13 @@ Other variables are in defaults/main.yml
 # Dependencies
 
     `bdellegrazie.ansible-role-prometheus_exporter`
+
+# How to add to ansible-galaxy 
+Add to requirements.yml
+
+    - name: marianschmotzer.lxd_exporter
+        src: https://github.com/marianschmotzer/lxd_exporter.git
+      path: ./dist
 
 # Example Playbook
 
